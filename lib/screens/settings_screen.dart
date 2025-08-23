@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../providers/auth_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -78,9 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildProfileSection() {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        return Container(
+    return Container(
           margin: const EdgeInsets.all(20),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -124,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     radius: 30,
                     backgroundColor: Colors.blue.withOpacity(0.1),
                     child: Text(
-                      authProvider.user?.displayName?.substring(0, 1).toUpperCase() ?? 'U',
+                      'U',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -138,33 +134,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          authProvider.user?.displayName ?? 'ユーザー',
+                          'ユーザー',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          authProvider.user?.email ?? '',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
                       ],
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () => _showEditProfileDialog(),
-                    icon: const Icon(Icons.edit, color: Colors.grey),
                   ),
                 ],
               ),
             ],
           ),
-        );
-      },
     );
   }
 
@@ -480,13 +463,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _buildSettingsTile(
-            title: 'ログアウト',
-            subtitle: 'アカウントからログアウト',
-            titleColor: Colors.red,
-            onTap: () => _showLogoutDialog(),
-          ),
         ],
       ),
     );
@@ -577,32 +553,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('ログアウト'),
-        content: const Text('本当にログアウトしますか？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('キャンセル'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await context.read<AuthProvider>().signOut();
-              if (mounted) {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login',
-                  (route) => false,
-                );
-              }
-            },
-            child: const Text('ログアウト', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
 }
