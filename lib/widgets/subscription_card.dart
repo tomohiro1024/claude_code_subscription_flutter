@@ -55,7 +55,7 @@ class SubscriptionCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    
+
                     // Service Info
                     Expanded(
                       child: Column(
@@ -81,12 +81,17 @@ class SubscriptionCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
+
                     // Status Badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(subscription.status).withOpacity(0.1),
+                        color: _getStatusColor(
+                          subscription.status,
+                        ).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -100,75 +105,15 @@ class SubscriptionCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                
-                const SizedBox(height: 16),
-                
-                // Billing Info
-                if (subscription.isActive && subscription.nextBillingDate != null)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.schedule, size: 16, color: Colors.blue.shade700),
-                        const SizedBox(width: 8),
-                        Text(
-                          '次回請求: ${DateFormat('MM月dd日').format(subscription.nextBillingDate!)}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blue.shade700,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          '${subscription.daysUntilBilling}日後',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blue.shade700,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                
-                if (subscription.isCancelled && subscription.cancelledAt != null)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.cancel, size: 16, color: Colors.red.shade700),
-                        const SizedBox(width: 8),
-                        Text(
-                          '解約日: ${DateFormat('MM月dd日').format(subscription.cancelledAt!)}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.red.shade700,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
               ],
             ),
           ),
-          
+
           // Action Buttons
           if (subscription.isActive)
             Container(
               decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: Colors.grey.shade200),
-                ),
+                border: Border(top: BorderSide(color: Colors.grey.shade200)),
               ),
               child: Row(
                 children: [
@@ -183,11 +128,7 @@ class SubscriptionCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    width: 1,
-                    height: 24,
-                    color: Colors.grey.shade200,
-                  ),
+                  Container(width: 1, height: 24, color: Colors.grey.shade200),
                   Expanded(
                     child: TextButton.icon(
                       onPressed: () => _launchCancellationUrl(context),
@@ -299,10 +240,10 @@ class SubscriptionCard extends StatelessWidget {
 
   void _cancelSubscription(BuildContext context) async {
     Navigator.pop(context);
-    
+
     final subscriptionProvider = context.read<SubscriptionProvider>();
     await subscriptionProvider.cancelSubscription(subscription.id);
-    
+
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -317,7 +258,8 @@ class SubscriptionCard extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CancellationGuideScreen(subscription: subscription),
+        builder:
+            (context) => CancellationGuideScreen(subscription: subscription),
       ),
     );
   }
@@ -329,9 +271,9 @@ class SubscriptionCard extends StatelessWidget {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('URLを開けませんでした')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('URLを開けませんでした')));
         }
       }
     }
