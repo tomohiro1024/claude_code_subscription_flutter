@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
             _buildSummaryCards(),
             _buildTabBar(),
             Expanded(child: _buildTabContent()),
@@ -51,58 +50,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
       ),
     );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'こんにちは,',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const Text(
-                  'ユーザー',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SettingsScreen()),
-                  ),
-                  icon: const Icon(Icons.settings, color: Colors.black87),
-                ),
-              ),
-            ],
-          ),
-        );
   }
 
   Widget _buildSummaryCards() {
@@ -115,7 +62,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Expanded(
                 child: _buildSummaryCard(
                   title: '月額合計',
-                  value: '¥${_currencyFormatter.format(subscriptionProvider.totalMonthlyCost)}',
+                  value:
+                      '¥${_currencyFormatter.format(subscriptionProvider.totalMonthlyCost)}',
                   icon: Icons.calendar_month,
                   color: Colors.blue,
                 ),
@@ -124,7 +72,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Expanded(
                 child: _buildSummaryCard(
                   title: '年額合計',
-                  value: '¥${_currencyFormatter.format(subscriptionProvider.totalYearlyCost)}',
+                  value:
+                      '¥${_currencyFormatter.format(subscriptionProvider.totalYearlyCost)}',
                   icon: Icons.calendar_today,
                   color: Colors.orange,
                 ),
@@ -211,10 +160,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         labelColor: Colors.white,
         unselectedLabelColor: Colors.grey[600],
-        tabs: const [
-          Tab(text: 'アクティブ'),
-          Tab(text: '解約済み'),
-        ],
+        tabs: const [Tab(text: 'アクティブ'), Tab(text: '解約済み')],
       ),
     );
   }
@@ -251,10 +197,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             const SizedBox(height: 16),
             Text(
               'サブスクリプションがありません',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -276,38 +219,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('プロフィール'),
-              onTap: () {
-                Navigator.pop(context);
-                // Navigate to profile screen
-              },
+      builder:
+          (context) => Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('プロフィール'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Navigate to profile screen
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.notifications),
+                  title: const Text('通知設定'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Navigate to notification settings
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.help),
+                  title: const Text('ヘルプ'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    // Navigate to help screen
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text('通知設定'),
-              onTap: () {
-                Navigator.pop(context);
-                // Navigate to notification settings
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.help),
-              title: const Text('ヘルプ'),
-              onTap: () {
-                Navigator.pop(context);
-                // Navigate to help screen
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 }
