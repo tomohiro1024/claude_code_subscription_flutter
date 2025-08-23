@@ -101,7 +101,7 @@ class SubscriptionProvider with ChangeNotifier {
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 60)),
         cancelledAt: DateTime.now().subtract(const Duration(days: 10)),
-        status: SubscriptionStatus.cancelled,
+        status: SubscriptionStatus.active,
         cancellationUrl: 'https://www.youtube.com/paid_memberships',
         customerServiceEmail: 'support@youtube.com',
       ),
