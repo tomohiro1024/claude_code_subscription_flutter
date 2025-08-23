@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/subscription_provider.dart';
 import '../widgets/subscription_card.dart';
-import 'settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,23 +11,15 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  late TabController _tabController;
+class _HomeScreenState extends State<HomeScreen> {
   final NumberFormat _currencyFormatter = NumberFormat('#,###');
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadSubscriptions();
     });
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   void _loadSubscriptions() {
@@ -44,8 +35,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Column(
           children: [
             _buildSummaryCards(),
-            _buildTabBar(),
-            Expanded(child: _buildTabContent()),
+            const SizedBox(height: 20),
+            Expanded(child: _buildSubscriptionList()),
           ],
         ),
       ),
@@ -138,52 +129,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Theme.of(context).primaryColor,
-        ),
-        labelColor: Colors.white,
-        unselectedLabelColor: Colors.grey[600],
-        tabs: const [Tab(text: 'アクティブ'), Tab(text: '解約済み')],
-      ),
-    );
-  }
 
-  Widget _buildTabContent() {
+  Widget _buildSubscriptionList() {
     return Consumer<SubscriptionProvider>(
       builder: (context, subscriptionProvider, child) {
         if (subscriptionProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return TabBarView(
-          controller: _tabController,
-          children: [
-            _buildSubscriptionList(subscriptionProvider.activeSubscriptions),
-            _buildSubscriptionList(subscriptionProvider.cancelledSubscriptions),
-          ],
-        );
+        final allSubscriptions = [
+          ...subscriptionProvider.activeSubscriptions,
+          ...subscriptionProvider.cancelledSubscriptions,
+        ];
+
+        return _buildList(allSubscriptions);
       },
     );
   }
 
-  Widget _buildSubscriptionList(List subscriptions) {
+  Widget _buildList(List subscriptions) {
     if (subscriptions.isEmpty) {
       return Center(
         child: Column(
@@ -205,53 +169,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(20),
       itemCount: subscriptions.length,
       itemBuilder: (context, index) {
-        return SubscriptionCard(subscription: subscriptions[index]);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: SubscriptionCard(subscription: subscriptions[index]),
+        );
       },
     );
   }
 
-  void _showSettingsMenu() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder:
-          (context) => Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  title: const Text('プロフィール'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // Navigate to profile screen
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.notifications),
-                  title: const Text('通知設定'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // Navigate to notification settings
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.help),
-                  title: const Text('ヘルプ'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    // Navigate to help screen
-                  },
-                ),
-              ],
-            ),
-          ),
-    );
-  }
 }
