@@ -6,15 +6,16 @@ import '../models/service_provider_model.dart';
 class CancellationGuideScreen extends StatelessWidget {
   final SubscriptionModel subscription;
 
-  const CancellationGuideScreen({
-    Key? key,
-    required this.subscription,
-  }) : super(key: key);
+  const CancellationGuideScreen({Key? key, required this.subscription})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final serviceProvider = ServiceProviders.getServiceById(
-      subscription.serviceName.toLowerCase().replaceAll(' ', '_').replaceAll('+', '_plus')
+      subscription.serviceName
+          .toLowerCase()
+          .replaceAll(' ', '_')
+          .replaceAll('+', '_plus'),
     );
 
     return Scaffold(
@@ -48,7 +49,10 @@ class CancellationGuideScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, ServiceProviderModel? serviceProvider) {
+  Widget _buildHeader(
+    BuildContext context,
+    ServiceProviderModel? serviceProvider,
+  ) {
     return Container(
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(24),
@@ -96,10 +100,7 @@ class CancellationGuideScreen extends StatelessWidget {
           if (serviceProvider != null) ...[
             Text(
               serviceProvider.description,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
           ],
@@ -134,19 +135,17 @@ class CancellationGuideScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             '解約の難易度: ${serviceProvider.difficultyText}',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const Spacer(),
           ...List.generate(5, (index) {
             return Icon(
               Icons.star,
               size: 16,
-              color: index < serviceProvider.difficulty
-                  ? _getDifficultyColor(serviceProvider.difficulty)
-                  : Colors.grey[300],
+              color:
+                  index < serviceProvider.difficulty
+                      ? _getDifficultyColor(serviceProvider.difficulty)
+                      : Colors.grey[300],
             );
           }),
         ],
@@ -161,13 +160,15 @@ class CancellationGuideScreen extends StatelessWidget {
   }
 
   Widget _buildStepsSection(ServiceProviderModel? serviceProvider) {
-    final steps = serviceProvider?.cancellationSteps ?? [
-      'サービスのウェブサイトにアクセス',
-      'アカウント設定を開く',
-      'サブスクリプション管理を選択',
-      'キャンセルオプションを見つける',
-      'キャンセル手続きを完了する',
-    ];
+    final steps =
+        serviceProvider?.cancellationSteps ??
+        [
+          'サービスのウェブサイトにアクセス',
+          'アカウント設定を開く',
+          'サブスクリプション管理を選択',
+          'キャンセルオプションを見つける',
+          'キャンセル手続きを完了する',
+        ];
 
     return Container(
       margin: const EdgeInsets.all(20),
@@ -199,10 +200,7 @@ class CancellationGuideScreen extends StatelessWidget {
               const SizedBox(width: 12),
               const Text(
                 '解約手順',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -246,10 +244,7 @@ class CancellationGuideScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 6),
               child: Text(
                 stepText,
-                style: const TextStyle(
-                  fontSize: 16,
-                  height: 1.4,
-                ),
+                style: const TextStyle(fontSize: 16, height: 1.4),
               ),
             ),
           ),
@@ -258,7 +253,10 @@ class CancellationGuideScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContactSection(BuildContext context, ServiceProviderModel? serviceProvider) {
+  Widget _buildContactSection(
+    BuildContext context,
+    ServiceProviderModel? serviceProvider,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(20),
@@ -289,10 +287,7 @@ class CancellationGuideScreen extends StatelessWidget {
               const SizedBox(width: 12),
               const Text(
                 'サポート連絡先',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -314,7 +309,7 @@ class CancellationGuideScreen extends StatelessWidget {
               onTap: () => _launchEmail(subscription.customerServiceEmail!),
             ),
           ],
-          if (subscription.customerServicePhone == null && 
+          if (subscription.customerServicePhone == null &&
               subscription.customerServiceEmail == null) ...[
             const Text(
               'カスタマーサポート情報は利用できません。\n公式ウェブサイトでサポート情報をご確認ください。',
@@ -351,16 +346,11 @@ class CancellationGuideScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                 ],
               ),
@@ -408,13 +398,14 @@ class CancellationGuideScreen extends StatelessWidget {
   void _launchCancellationUrl(BuildContext context) async {
     if (subscription.cancellationUrl != null) {
       final uri = Uri.parse(subscription.cancellationUrl!);
+      print('Launching URL: $uri');
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('URLを開けませんでした')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('URLを開けませんでした')));
         }
       }
     }

@@ -175,8 +175,8 @@ class SubscriptionCard extends StatelessWidget {
                   Expanded(
                     child: TextButton.icon(
                       onPressed: () => _navigateToCancellationGuide(context),
-                      icon: const Icon(Icons.cancel_outlined, size: 18),
-                      label: const Text('解約する'),
+                      icon: const Icon(Icons.info, size: 18),
+                      label: const Text('解約方法'),
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.red,
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -192,7 +192,7 @@ class SubscriptionCard extends StatelessWidget {
                     child: TextButton.icon(
                       onPressed: () => _launchCancellationUrl(context),
                       icon: const Icon(Icons.open_in_new, size: 18),
-                      label: const Text('サイトで管理'),
+                      label: const Text('解約サイトへ'),
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.blue,
                         padding: const EdgeInsets.symmetric(vertical: 16),
