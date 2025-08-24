@@ -76,14 +76,25 @@ class CancellationGuideScreen extends StatelessWidget {
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Center(
-              child: Text(
-                subscription.serviceName.substring(0, 1),
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black54,
-                ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                subscription.serviceLogoUrl,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Text(
+                      subscription.serviceName.substring(0, 1),
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),

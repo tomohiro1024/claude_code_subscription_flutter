@@ -56,14 +56,25 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                         color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Center(
-                        child: Text(
-                          widget.subscription.serviceName.substring(0, 1),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          widget.subscription.serviceLogoUrl,
+                          width: 48,
+                          height: 48,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Text(
+                                widget.subscription.serviceName.substring(0, 1),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -140,11 +151,16 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                                   setState(() {
                                     _isActive = value;
                                   });
-                                  final newStatus = value 
-                                      ? SubscriptionStatus.active 
-                                      : SubscriptionStatus.cancelled;
-                                  context.read<SubscriptionProvider>()
-                                      .updateSubscriptionStatus(widget.subscription.id, newStatus);
+                                  final newStatus =
+                                      value
+                                          ? SubscriptionStatus.active
+                                          : SubscriptionStatus.cancelled;
+                                  context
+                                      .read<SubscriptionProvider>()
+                                      .updateSubscriptionStatus(
+                                        widget.subscription.id,
+                                        newStatus,
+                                      );
                                 },
                                 activeColor: Colors.green,
                                 inactiveThumbColor: Colors.red,
@@ -216,8 +232,6 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
         return '解約済み';
     }
   }
-
-
 
   void _navigateToCancellationGuide(BuildContext context) {
     Navigator.push(
