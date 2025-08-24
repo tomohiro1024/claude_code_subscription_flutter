@@ -108,7 +108,7 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                               _isActive
                                   ? SubscriptionStatus.active
                                   : SubscriptionStatus.cancelled,
-                            ).withOpacity(0.1),
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -140,6 +140,11 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                                   setState(() {
                                     _isActive = value;
                                   });
+                                  final newStatus = value 
+                                      ? SubscriptionStatus.active 
+                                      : SubscriptionStatus.cancelled;
+                                  context.read<SubscriptionProvider>()
+                                      .updateSubscriptionStatus(widget.subscription.id, newStatus);
                                 },
                                 activeColor: Colors.green,
                                 inactiveThumbColor: Colors.red,
@@ -151,7 +156,6 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
               ],
             ),
           ),
@@ -213,89 +217,7 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
     }
   }
 
-  void _showCancellationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('${widget.subscription.serviceName}を解約'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('${widget.subscription.serviceName}のサブスクリプションを解約しますか？'),
-              const SizedBox(height: 16),
-              const Text('解約方法:'),
-              const SizedBox(height: 8),
-              if (widget.subscription.cancellationUrl != null) ...[
-                Row(
-                  children: [
-                    Icon(Icons.web, size: 16, color: Colors.grey[600]),
-                    const SizedBox(width: 8),
-                    const Expanded(child: Text('オンラインで解約')),
-                  ],
-                ),
-                const SizedBox(height: 8),
-              ],
-              if (widget.subscription.customerServicePhone != null) ...[
-                Row(
-                  children: [
-                    Icon(Icons.phone, size: 16, color: Colors.grey[600]),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(widget.subscription.customerServicePhone!),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-              ],
-              if (widget.subscription.customerServiceEmail != null) ...[
-                Row(
-                  children: [
-                    Icon(Icons.email, size: 16, color: Colors.grey[600]),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(widget.subscription.customerServiceEmail!),
-                    ),
-                  ],
-                ),
-              ],
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('キャンセル'),
-            ),
-            ElevatedButton(
-              onPressed: () => _cancelSubscription(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('解約する'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
-  void _cancelSubscription(BuildContext context) async {
-    Navigator.pop(context);
-
-    final subscriptionProvider = context.read<SubscriptionProvider>();
-    await subscriptionProvider.cancelSubscription(widget.subscription.id);
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${widget.subscription.serviceName}が解約されました'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
-  }
 
   void _navigateToCancellationGuide(BuildContext context) {
     Navigator.push(

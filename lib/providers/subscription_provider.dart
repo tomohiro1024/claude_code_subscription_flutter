@@ -15,10 +15,6 @@ class SubscriptionProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
   
-  double get totalMonthlyCost => activeSubscriptions
-      .fold(0.0, (sum, subscription) => sum + subscription.monthlyPrice);
-  
-  double get totalYearlyCost => totalMonthlyCost * 12;
   
   int get activeSubscriptionCount => activeSubscriptions.length;
 
@@ -156,5 +152,31 @@ class SubscriptionProvider with ChangeNotifier {
   void clearError() {
     _errorMessage = '';
     notifyListeners();
+  }
+
+  void updateSubscriptionStatus(String subscriptionId, SubscriptionStatus newStatus) {
+    final index = _subscriptions.indexWhere((sub) => sub.id == subscriptionId);
+    if (index != -1) {
+      _subscriptions[index] = SubscriptionModel(
+        id: _subscriptions[index].id,
+        userId: _subscriptions[index].userId,
+        serviceName: _subscriptions[index].serviceName,
+        serviceLogoUrl: _subscriptions[index].serviceLogoUrl,
+        monthlyPrice: _subscriptions[index].monthlyPrice,
+        currency: _subscriptions[index].currency,
+        startDate: _subscriptions[index].startDate,
+        nextBillingDate: newStatus == SubscriptionStatus.active 
+            ? _subscriptions[index].nextBillingDate ?? DateTime.now().add(const Duration(days: 30))
+            : null,
+        cancelledAt: newStatus == SubscriptionStatus.cancelled 
+            ? DateTime.now() 
+            : null,
+        status: newStatus,
+        cancellationUrl: _subscriptions[index].cancellationUrl,
+        customerServicePhone: _subscriptions[index].customerServicePhone,
+        customerServiceEmail: _subscriptions[index].customerServiceEmail,
+      );
+      notifyListeners();
+    }
   }
 }
