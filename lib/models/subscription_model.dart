@@ -1,8 +1,6 @@
 enum SubscriptionStatus {
   active,
   cancelled,
-  expired,
-  paused,
 }
 
 class SubscriptionModel {

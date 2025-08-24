@@ -154,10 +154,6 @@ class SubscriptionCard extends StatelessWidget {
         return Colors.green;
       case SubscriptionStatus.cancelled:
         return Colors.red;
-      case SubscriptionStatus.expired:
-        return Colors.orange;
-      case SubscriptionStatus.paused:
-        return Colors.blue;
     }
   }
 
@@ -167,10 +163,6 @@ class SubscriptionCard extends StatelessWidget {
         return 'アクティブ';
       case SubscriptionStatus.cancelled:
         return '解約済み';
-      case SubscriptionStatus.expired:
-        return '期限切れ';
-      case SubscriptionStatus.paused:
-        return '一時停止';
     }
   }
 
