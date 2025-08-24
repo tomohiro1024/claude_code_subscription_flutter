@@ -6,11 +6,24 @@ import '../models/subscription_model.dart';
 import '../providers/subscription_provider.dart';
 import '../screens/cancellation_guide_screen.dart';
 
-class SubscriptionCard extends StatelessWidget {
+class SubscriptionCard extends StatefulWidget {
   final SubscriptionModel subscription;
-  final NumberFormat _currencyFormatter = NumberFormat('#,###');
 
   SubscriptionCard({Key? key, required this.subscription}) : super(key: key);
+
+  @override
+  _SubscriptionCardState createState() => _SubscriptionCardState();
+}
+
+class _SubscriptionCardState extends State<SubscriptionCard> {
+  final NumberFormat _currencyFormatter = NumberFormat('#,###');
+  late bool _isActive;
+
+  @override
+  void initState() {
+    super.initState();
+    _isActive = widget.subscription.status == SubscriptionStatus.active;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +58,7 @@ class SubscriptionCard extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          subscription.serviceName.substring(0, 1),
+                          widget.subscription.serviceName.substring(0, 1),
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -62,7 +75,7 @@ class SubscriptionCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            subscription.serviceName,
+                            widget.subscription.serviceName,
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -71,7 +84,7 @@ class SubscriptionCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '¥${_currencyFormatter.format(subscription.monthlyPrice)} / 月',
+                            '¥${_currencyFormatter.format(widget.subscription.monthlyPrice)} / 月',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
@@ -83,34 +96,68 @@ class SubscriptionCard extends StatelessWidget {
                     ),
 
                     // Status Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(
-                          subscription.status,
-                        ).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        _getStatusText(subscription.status),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: _getStatusColor(subscription.status),
+                    Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(
+                              _isActive
+                                  ? SubscriptionStatus.active
+                                  : SubscriptionStatus.cancelled,
+                            ).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            _getStatusText(
+                              _isActive
+                                  ? SubscriptionStatus.active
+                                  : SubscriptionStatus.cancelled,
+                            ),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: _getStatusColor(
+                                _isActive
+                                    ? SubscriptionStatus.active
+                                    : SubscriptionStatus.cancelled,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        Row(
+                          children: [
+                            const SizedBox(width: 20),
+                            Transform.scale(
+                              scaleX: 0.9,
+                              scaleY: 0.8,
+                              child: Switch(
+                                value: _isActive,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    _isActive = value;
+                                  });
+                                },
+                                activeColor: Colors.green,
+                                inactiveThumbColor: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),
 
           // Action Buttons
-          if (subscription.isActive)
+          if (widget.subscription.isActive)
             Container(
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Colors.grey.shade200)),
@@ -171,16 +218,16 @@ class SubscriptionCard extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('${subscription.serviceName}を解約'),
+          title: Text('${widget.subscription.serviceName}を解約'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${subscription.serviceName}のサブスクリプションを解約しますか？'),
+              Text('${widget.subscription.serviceName}のサブスクリプションを解約しますか？'),
               const SizedBox(height: 16),
               const Text('解約方法:'),
               const SizedBox(height: 8),
-              if (subscription.cancellationUrl != null) ...[
+              if (widget.subscription.cancellationUrl != null) ...[
                 Row(
                   children: [
                     Icon(Icons.web, size: 16, color: Colors.grey[600]),
@@ -190,22 +237,26 @@ class SubscriptionCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
               ],
-              if (subscription.customerServicePhone != null) ...[
+              if (widget.subscription.customerServicePhone != null) ...[
                 Row(
                   children: [
                     Icon(Icons.phone, size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 8),
-                    Expanded(child: Text(subscription.customerServicePhone!)),
+                    Expanded(
+                      child: Text(widget.subscription.customerServicePhone!),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
               ],
-              if (subscription.customerServiceEmail != null) ...[
+              if (widget.subscription.customerServiceEmail != null) ...[
                 Row(
                   children: [
                     Icon(Icons.email, size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 8),
-                    Expanded(child: Text(subscription.customerServiceEmail!)),
+                    Expanded(
+                      child: Text(widget.subscription.customerServiceEmail!),
+                    ),
                   ],
                 ),
               ],
@@ -234,12 +285,12 @@ class SubscriptionCard extends StatelessWidget {
     Navigator.pop(context);
 
     final subscriptionProvider = context.read<SubscriptionProvider>();
-    await subscriptionProvider.cancelSubscription(subscription.id);
+    await subscriptionProvider.cancelSubscription(widget.subscription.id);
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${subscription.serviceName}が解約されました'),
+          content: Text('${widget.subscription.serviceName}が解約されました'),
           backgroundColor: Colors.green,
         ),
       );
@@ -251,14 +302,15 @@ class SubscriptionCard extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder:
-            (context) => CancellationGuideScreen(subscription: subscription),
+            (context) =>
+                CancellationGuideScreen(subscription: widget.subscription),
       ),
     );
   }
 
   void _launchCancellationUrl(BuildContext context) async {
-    if (subscription.cancellationUrl != null) {
-      final uri = Uri.parse(subscription.cancellationUrl!);
+    if (widget.subscription.cancellationUrl != null) {
+      final uri = Uri.parse(widget.subscription.cancellationUrl!);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
