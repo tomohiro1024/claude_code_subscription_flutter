@@ -101,7 +101,7 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
-                            vertical: 6,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: _getStatusColor(
