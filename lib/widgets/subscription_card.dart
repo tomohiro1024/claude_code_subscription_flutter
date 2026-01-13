@@ -227,7 +227,7 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
   String _getStatusText(SubscriptionStatus status) {
     switch (status) {
       case SubscriptionStatus.active:
-        return 'アクティブ';
+        return '契約中';
       case SubscriptionStatus.cancelled:
         return '解約済み';
     }
