@@ -11,15 +11,23 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   final NumberFormat _currencyFormatter = NumberFormat('#,###');
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadSubscriptions();
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _loadSubscriptions() {
@@ -32,26 +40,71 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: _buildSubscriptionList(),
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              child: TabBar(
+                controller: _tabController,
+                labelColor: Colors.blue[600],
+                unselectedLabelColor: Colors.grey[600],
+                indicatorColor: Colors.blue[600],
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.movie),
+                    text: '動画配信',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.music_note),
+                    text: '音楽配信',
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildVideoStreamingList(),
+                  _buildMusicStreamingList(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSubscriptionList() {
+  Widget _buildVideoStreamingList() {
     return Consumer<SubscriptionProvider>(
       builder: (context, subscriptionProvider, child) {
         if (subscriptionProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final allSubscriptions = subscriptionProvider.subscriptions;
+        final videoServices = subscriptionProvider.videoStreamingServices;
 
-        return _buildList(allSubscriptions);
+        return _buildList(videoServices, '動画配信サービスがありません');
       },
     );
   }
 
-  Widget _buildList(List subscriptions) {
+  Widget _buildMusicStreamingList() {
+    return Consumer<SubscriptionProvider>(
+      builder: (context, subscriptionProvider, child) {
+        if (subscriptionProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final musicServices = subscriptionProvider.musicStreamingServices;
+
+        return _buildList(musicServices, '音楽配信サービスがありません');
+      },
+    );
+  }
+
+  Widget _buildList(List subscriptions, String emptyMessage) {
     if (subscriptions.isEmpty) {
       return Center(
         child: Column(
@@ -64,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'サブスクリプションがありません',
+              emptyMessage,
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
