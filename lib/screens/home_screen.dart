@@ -11,7 +11,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final NumberFormat _currencyFormatter = NumberFormat('#,###');
 
@@ -39,44 +40,35 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.white,
-              child: TabBar(
-                controller: _tabController,
-                labelColor: Colors.blue[600],
-                unselectedLabelColor: Colors.grey[600],
-                indicatorColor: Colors.blue[600],
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.movie),
-                    text: '動画配信',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.music_note),
-                    text: '音楽配信',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.sports_soccer),
-                    text: 'スポーツ配信',
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildVideoStreamingList(),
-                  _buildMusicStreamingList(),
-                  _buildSportsStreamingList(),
-                ],
-              ),
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'サブスク管理',
+          style: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: Colors.blue[600],
+          unselectedLabelColor: Colors.grey[600],
+          indicatorColor: Colors.blue[600],
+          tabs: const [
+            Tab(icon: Icon(Icons.movie), text: '動画配信'),
+            Tab(icon: Icon(Icons.music_note), text: '音楽配信'),
+            Tab(icon: Icon(Icons.sports_soccer), text: 'スポーツ配信'),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildVideoStreamingList(),
+          _buildMusicStreamingList(),
+          _buildSportsStreamingList(),
+        ],
       ),
     );
   }
@@ -155,5 +147,4 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       },
     );
   }
-
 }
