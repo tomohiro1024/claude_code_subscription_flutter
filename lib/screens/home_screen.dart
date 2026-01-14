@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadSubscriptions();
     });
@@ -58,6 +58,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     icon: Icon(Icons.music_note),
                     text: '音楽配信',
                   ),
+                  Tab(
+                    icon: Icon(Icons.sports_soccer),
+                    text: 'スポーツ配信',
+                  ),
                 ],
               ),
             ),
@@ -67,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 children: [
                   _buildVideoStreamingList(),
                   _buildMusicStreamingList(),
+                  _buildSportsStreamingList(),
                 ],
               ),
             ),
@@ -100,6 +105,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         final musicServices = subscriptionProvider.musicStreamingServices;
 
         return _buildList(musicServices, '音楽配信サービスがありません');
+      },
+    );
+  }
+
+  Widget _buildSportsStreamingList() {
+    return Consumer<SubscriptionProvider>(
+      builder: (context, subscriptionProvider, child) {
+        if (subscriptionProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final sportsServices = subscriptionProvider.sportsStreamingServices;
+
+        return _buildList(sportsServices, 'スポーツ配信サービスがありません');
       },
     );
   }

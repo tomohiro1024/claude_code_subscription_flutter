@@ -40,6 +40,11 @@ class SubscriptionProvider with ChangeNotifier {
           )
           .toList();
 
+  List<SubscriptionModel> get sportsStreamingServices =>
+      _subscriptions
+          .where((sub) => ['DAZN', 'SPOTV NOW'].contains(sub.serviceName))
+          .toList();
+
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
 
@@ -229,6 +234,36 @@ class SubscriptionProvider with ChangeNotifier {
         status: SubscriptionStatus.cancelled,
         cancellationUrl: 'https://music.line.me/settings',
         customerServiceEmail: 'support@linemusic.co.jp',
+      ),
+
+      // スポーツ配信サービス
+      SubscriptionModel(
+        id: '13',
+        userId: 'sample_user',
+        serviceName: 'DAZN',
+        serviceLogoUrl:
+            'https://yt3.googleusercontent.com/bc4e_5T4STQ-ZfxXp8tcX8xBcWkiafZJsb7v_4zu8Y1bT5dlRpjd5lvg2VVJWd66-xqGjubeHQ=s900-c-k-c0x00ffffff-no-rj',
+        monthlyPrice: 4200,
+        currency: 'JPY',
+        startDate: DateTime.now().subtract(const Duration(days: 100)),
+        nextBillingDate: DateTime.now().add(const Duration(days: 14)),
+        status: SubscriptionStatus.active,
+        cancellationUrl: 'https://www.dazn.com/ja-JP/account',
+        customerServiceEmail: 'help@dazn.com',
+      ),
+      SubscriptionModel(
+        id: '14',
+        userId: 'sample_user',
+        serviceName: 'SPOTV NOW',
+        serviceLogoUrl:
+            'https://m.media-amazon.com/images/I/31qabiShmjL.png',
+        monthlyPrice: 1300,
+        currency: 'JPY',
+        startDate: DateTime.now().subtract(const Duration(days: 50)),
+        nextBillingDate: DateTime.now().add(const Duration(days: 11)),
+        status: SubscriptionStatus.active,
+        cancellationUrl: 'https://www.spotvnow.jp/account',
+        customerServiceEmail: 'support@spotvnow.jp',
       ),
     ];
   }
