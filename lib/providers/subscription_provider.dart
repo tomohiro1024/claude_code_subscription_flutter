@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/subscription_model.dart';
 
 class SubscriptionProvider with ChangeNotifier {
@@ -59,6 +60,8 @@ class SubscriptionProvider with ChangeNotifier {
       // For demo purposes, we'll load sample data
       await Future.delayed(const Duration(seconds: 1));
       _loadSampleData();
+      // SharedPreferencesから保存済みのステータスを適用
+      await _applySavedStatuses();
       _setLoading(false);
     } catch (e) {
       _setError('サブスクリプション情報の読み込みに失敗しました');
@@ -331,7 +334,65 @@ class SubscriptionProvider with ChangeNotifier {
         customerServicePhone: _subscriptions[index].customerServicePhone,
         customerServiceEmail: _subscriptions[index].customerServiceEmail,
       );
+      // SharedPreferencesにステータスを保存
+      _saveStatusToPrefs(subscriptionId, newStatus);
       notifyListeners();
+    }
+  }
+
+  // ステータスをSharedPreferencesに保存
+  Future<void> _saveStatusToPrefs(
+    String subscriptionId,
+    SubscriptionStatus status,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      'subscription_status_$subscriptionId',
+      status.toString().split('.').last,
+    );
+  }
+
+  // SharedPreferencesからステータスを読み込み
+  Future<SubscriptionStatus?> _loadStatusFromPrefs(String subscriptionId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final statusString = prefs.getString('subscription_status_$subscriptionId');
+    if (statusString == null) return null;
+
+    try {
+      return SubscriptionStatus.values.firstWhere(
+        (e) => e.toString().split('.').last == statusString,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 全サブスクリプションのステータスをSharedPreferencesから読み込んで適用
+  Future<void> _applySavedStatuses() async {
+    for (int i = 0; i < _subscriptions.length; i++) {
+      final savedStatus = await _loadStatusFromPrefs(_subscriptions[i].id);
+      if (savedStatus != null) {
+        _subscriptions[i] = SubscriptionModel(
+          id: _subscriptions[i].id,
+          userId: _subscriptions[i].userId,
+          serviceName: _subscriptions[i].serviceName,
+          serviceLogoUrl: _subscriptions[i].serviceLogoUrl,
+          monthlyPrice: _subscriptions[i].monthlyPrice,
+          currency: _subscriptions[i].currency,
+          startDate: _subscriptions[i].startDate,
+          nextBillingDate:
+              savedStatus == SubscriptionStatus.active
+                  ? _subscriptions[i].nextBillingDate ??
+                      DateTime.now().add(const Duration(days: 30))
+                  : null,
+          cancelledAt:
+              savedStatus == SubscriptionStatus.cancelled ? DateTime.now() : null,
+          status: savedStatus,
+          cancellationUrl: _subscriptions[i].cancellationUrl,
+          customerServicePhone: _subscriptions[i].customerServicePhone,
+          customerServiceEmail: _subscriptions[i].customerServiceEmail,
+        );
+      }
     }
   }
 }
