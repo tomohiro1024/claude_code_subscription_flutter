@@ -17,12 +17,12 @@ class SubscriptionCard extends StatefulWidget {
 
 class _SubscriptionCardState extends State<SubscriptionCard> {
   final NumberFormat _currencyFormatter = NumberFormat('#,###');
-  late bool _isActive;
+  late SubscriptionStatus _currentStatus;
 
   @override
   void initState() {
     super.initState();
-    _isActive = widget.subscription.status == SubscriptionStatus.active;
+    _currentStatus = widget.subscription.status;
   }
 
   @override
@@ -106,69 +106,93 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                       ),
                     ),
 
-                    // Status Badge
-                    Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(
-                              _isActive
-                                  ? SubscriptionStatus.active
-                                  : SubscriptionStatus.cancelled,
-                            ).withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            _getStatusText(
-                              _isActive
-                                  ? SubscriptionStatus.active
-                                  : SubscriptionStatus.cancelled,
-                            ),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: _getStatusColor(
-                                _isActive
-                                    ? SubscriptionStatus.active
-                                    : SubscriptionStatus.cancelled,
+                    // Status Badge with Dropdown
+                    PopupMenuButton<SubscriptionStatus>(
+                      onSelected: (SubscriptionStatus newStatus) {
+                        setState(() {
+                          _currentStatus = newStatus;
+                        });
+                        context
+                            .read<SubscriptionProvider>()
+                            .updateSubscriptionStatus(
+                              widget.subscription.id,
+                              newStatus,
+                            );
+                      },
+                      itemBuilder: (BuildContext context) => [
+                        PopupMenuItem(
+                          value: SubscriptionStatus.active,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                                size: 18,
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              const Text('契約中'),
+                            ],
                           ),
                         ),
-                        Row(
-                          children: [
-                            const SizedBox(width: 20),
-                            Transform.scale(
-                              scaleX: 0.9,
-                              scaleY: 0.8,
-                              child: Switch(
-                                value: _isActive,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    _isActive = value;
-                                  });
-                                  final newStatus =
-                                      value
-                                          ? SubscriptionStatus.active
-                                          : SubscriptionStatus.cancelled;
-                                  context
-                                      .read<SubscriptionProvider>()
-                                      .updateSubscriptionStatus(
-                                        widget.subscription.id,
-                                        newStatus,
-                                      );
-                                },
-                                activeColor: Colors.green,
-                                inactiveThumbColor: Colors.red,
+                        PopupMenuItem(
+                          value: SubscriptionStatus.cancelled,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                                size: 18,
                               ),
+                              const SizedBox(width: 8),
+                              const Text('解約済み'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: SubscriptionStatus.notSubscribed,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.remove_circle_outline,
+                                color: Colors.grey,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text('未契約'),
+                            ],
+                          ),
+                        ),
+                      ],
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(_currentStatus)
+                              .withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _getStatusText(_currentStatus),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: _getStatusColor(_currentStatus),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_drop_down,
+                              size: 16,
+                              color: _getStatusColor(_currentStatus),
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
@@ -177,7 +201,7 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
           ),
 
           // Action Buttons
-          if (widget.subscription.isActive)
+          if (_currentStatus == SubscriptionStatus.active)
             Container(
               decoration: BoxDecoration(
                 border: Border(top: BorderSide(color: Colors.grey.shade200)),
@@ -221,6 +245,8 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
         return Colors.green;
       case SubscriptionStatus.cancelled:
         return Colors.red;
+      case SubscriptionStatus.notSubscribed:
+        return Colors.grey;
     }
   }
 
@@ -230,6 +256,8 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
         return '契約中';
       case SubscriptionStatus.cancelled:
         return '解約済み';
+      case SubscriptionStatus.notSubscribed:
+        return '未契約';
     }
   }
 

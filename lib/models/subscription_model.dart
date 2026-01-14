@@ -1,6 +1,7 @@
 enum SubscriptionStatus {
   active,
   cancelled,
+  notSubscribed,
 }
 
 class SubscriptionModel {
@@ -78,6 +79,7 @@ class SubscriptionModel {
 
   bool get isActive => status == SubscriptionStatus.active;
   bool get isCancelled => status == SubscriptionStatus.cancelled;
+  bool get isNotSubscribed => status == SubscriptionStatus.notSubscribed;
   
   int get daysUntilBilling {
     if (nextBillingDate == null) return 0;
