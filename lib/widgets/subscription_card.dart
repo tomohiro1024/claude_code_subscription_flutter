@@ -94,13 +94,31 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            '¥${_currencyFormatter.format(widget.subscription.monthlyPrice)} / 月額',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                '¥${_currencyFormatter.format(widget.subscription.monthlyPrice)} / 月額',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              if (widget.subscription.serviceName
+                                  .toLowerCase()
+                                  .contains('netflix'))
+                                GestureDetector(
+                                  onTap: () => _showNetflixPlansDialog(context),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 6),
+                                    child: Icon(
+                                      Icons.info_outline,
+                                      size: 18,
+                                      color: Colors.blue[600],
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                           if (widget.subscription.yearPrice != null) ...[
                             const SizedBox(height: 2),
@@ -130,58 +148,60 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                               newStatus,
                             );
                       },
-                      itemBuilder: (BuildContext context) => [
-                        PopupMenuItem(
-                          value: SubscriptionStatus.active,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 18,
+                      itemBuilder:
+                          (BuildContext context) => [
+                            PopupMenuItem(
+                              value: SubscriptionStatus.active,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('契約中'),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                              const Text('契約中'),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: SubscriptionStatus.cancelled,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                                size: 18,
+                            ),
+                            PopupMenuItem(
+                              value: SubscriptionStatus.cancelled,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('解約済み'),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                              const Text('解約済み'),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: SubscriptionStatus.notSubscribed,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.remove_circle_outline,
-                                color: Colors.grey,
-                                size: 18,
+                            ),
+                            PopupMenuItem(
+                              value: SubscriptionStatus.notSubscribed,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.remove_circle_outline,
+                                    color: Colors.grey,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('未契約'),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                              const Text('未契約'),
-                            ],
-                          ),
-                        ),
-                      ],
+                            ),
+                          ],
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(_currentStatus)
-                              .withValues(alpha: 0.1),
+                          color: _getStatusColor(
+                            _currentStatus,
+                          ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -296,5 +316,52 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
         }
       }
     }
+  }
+
+  void _showNetflixPlansDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Netflixプラン一覧',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPlanRow('広告つきスタンダード', '¥890'),
+              const SizedBox(height: 12),
+              _buildPlanRow('スタンダード', '¥1,590'),
+              const SizedBox(height: 12),
+              _buildPlanRow('プレミアム', '¥2,290'),
+            ],
+          ),
+          actions: [
+            Center(
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('閉じる'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPlanRow(String planName, String price) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(planName, style: const TextStyle(fontSize: 14)),
+        Text(
+          price,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+      ],
+    );
   }
 }

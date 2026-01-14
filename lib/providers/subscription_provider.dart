@@ -78,7 +78,7 @@ class SubscriptionProvider with ChangeNotifier {
         serviceName: 'Netflix',
         serviceLogoUrl:
             'https://assets.st-note.com/production/uploads/images/84831104/picture_pc_c1ff6adc172e4b1a708881f2f508ebaf.png?width=1200',
-        monthlyPrice: 1490,
+        monthlyPrice: 1590,
         currency: 'JPY',
         startDate: DateTime.now(),
         status: SubscriptionStatus.notSubscribed,
@@ -282,6 +282,7 @@ class SubscriptionProvider with ChangeNotifier {
           serviceName: _subscriptions[index].serviceName,
           serviceLogoUrl: _subscriptions[index].serviceLogoUrl,
           monthlyPrice: _subscriptions[index].monthlyPrice,
+          yearPrice: _subscriptions[index].yearPrice,
           currency: _subscriptions[index].currency,
           startDate: _subscriptions[index].startDate,
           nextBillingDate: null,
@@ -328,6 +329,7 @@ class SubscriptionProvider with ChangeNotifier {
         serviceName: _subscriptions[index].serviceName,
         serviceLogoUrl: _subscriptions[index].serviceLogoUrl,
         monthlyPrice: _subscriptions[index].monthlyPrice,
+        yearPrice: _subscriptions[index].yearPrice,
         currency: _subscriptions[index].currency,
         startDate: _subscriptions[index].startDate,
         nextBillingDate:
@@ -386,6 +388,7 @@ class SubscriptionProvider with ChangeNotifier {
           serviceName: _subscriptions[i].serviceName,
           serviceLogoUrl: _subscriptions[i].serviceLogoUrl,
           monthlyPrice: _subscriptions[i].monthlyPrice,
+          yearPrice: _subscriptions[i].yearPrice,
           currency: _subscriptions[i].currency,
           startDate: _subscriptions[i].startDate,
           nextBillingDate:
