@@ -95,13 +95,24 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '¥${_currencyFormatter.format(widget.subscription.monthlyPrice)} / 月',
+                            '¥${_currencyFormatter.format(widget.subscription.monthlyPrice)} / 月額',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w500,
                             ),
                           ),
+                          if (widget.subscription.yearPrice != null) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              '¥${_currencyFormatter.format(widget.subscription.yearPrice!)} / 年額',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[500],
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),

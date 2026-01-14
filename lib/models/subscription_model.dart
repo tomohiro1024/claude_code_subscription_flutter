@@ -10,6 +10,7 @@ class SubscriptionModel {
   final String serviceName;
   final String serviceLogoUrl;
   final double monthlyPrice;
+  final double? yearPrice;
   final String currency;
   final DateTime startDate;
   final DateTime? nextBillingDate;
@@ -25,6 +26,7 @@ class SubscriptionModel {
     required this.serviceName,
     required this.serviceLogoUrl,
     required this.monthlyPrice,
+    this.yearPrice,
     required this.currency,
     required this.startDate,
     this.nextBillingDate,
@@ -42,13 +44,14 @@ class SubscriptionModel {
       serviceName: json['serviceName'],
       serviceLogoUrl: json['serviceLogoUrl'],
       monthlyPrice: json['monthlyPrice'].toDouble(),
+      yearPrice: json['yearPrice']?.toDouble(),
       currency: json['currency'],
       startDate: DateTime.parse(json['startDate']),
-      nextBillingDate: json['nextBillingDate'] != null 
-          ? DateTime.parse(json['nextBillingDate']) 
+      nextBillingDate: json['nextBillingDate'] != null
+          ? DateTime.parse(json['nextBillingDate'])
           : null,
-      cancelledAt: json['cancelledAt'] != null 
-          ? DateTime.parse(json['cancelledAt']) 
+      cancelledAt: json['cancelledAt'] != null
+          ? DateTime.parse(json['cancelledAt'])
           : null,
       status: SubscriptionStatus.values.firstWhere(
         (e) => e.toString().split('.').last == json['status']
@@ -66,6 +69,7 @@ class SubscriptionModel {
       'serviceName': serviceName,
       'serviceLogoUrl': serviceLogoUrl,
       'monthlyPrice': monthlyPrice,
+      'yearPrice': yearPrice,
       'currency': currency,
       'startDate': startDate.toIso8601String(),
       'nextBillingDate': nextBillingDate?.toIso8601String(),
