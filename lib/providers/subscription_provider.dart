@@ -7,27 +7,48 @@ class SubscriptionProvider with ChangeNotifier {
   String _errorMessage = '';
 
   List<SubscriptionModel> get subscriptions => _subscriptions;
-  List<SubscriptionModel> get activeSubscriptions => 
+  List<SubscriptionModel> get activeSubscriptions =>
       _subscriptions.where((sub) => sub.isActive).toList();
-  List<SubscriptionModel> get cancelledSubscriptions => 
+  List<SubscriptionModel> get cancelledSubscriptions =>
       _subscriptions.where((sub) => sub.isCancelled).toList();
-  
-  List<SubscriptionModel> get videoStreamingServices => _subscriptions.where((sub) =>
-      ['Netflix', 'Amazon Prime Video', 'Disney+', 'Hulu', 'U-NEXT', 'ABEMAプレミアム', 'YouTube Premium'].contains(sub.serviceName)).toList();
-  
-  List<SubscriptionModel> get musicStreamingServices => _subscriptions.where((sub) => 
-      ['Spotify Premium', 'Apple Music', 'Amazon Music Unlimited', 'YouTube Music', 'LINE MUSIC'].contains(sub.serviceName)).toList();
-  
+
+  List<SubscriptionModel> get videoStreamingServices =>
+      _subscriptions
+          .where(
+            (sub) => [
+              'Netflix',
+              'Amazon Prime Video',
+              'Disney+',
+              'Hulu',
+              'U-NEXT',
+              'ABEMAプレミアム',
+              'YouTube Premium',
+            ].contains(sub.serviceName),
+          )
+          .toList();
+
+  List<SubscriptionModel> get musicStreamingServices =>
+      _subscriptions
+          .where(
+            (sub) => [
+              'Spotify Premium',
+              'Apple Music',
+              'Amazon Music Unlimited',
+              'YouTube Music',
+              'LINE MUSIC',
+            ].contains(sub.serviceName),
+          )
+          .toList();
+
   bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
-  
-  
+
   int get activeSubscriptionCount => activeSubscriptions.length;
 
   Future<void> loadSubscriptions(String userId) async {
     _setLoading(true);
     _setError('');
-    
+
     try {
       // In a real app, this would fetch from Firestore
       // For demo purposes, we'll load sample data
@@ -47,7 +68,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '1',
         userId: 'sample_user',
         serviceName: 'Netflix',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/netflix.png',
+        serviceLogoUrl:
+            'https://assets.st-note.com/production/uploads/images/84831104/picture_pc_c1ff6adc172e4b1a708881f2f508ebaf.png?width=1200',
         monthlyPrice: 1490,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 90)),
@@ -60,7 +82,7 @@ class SubscriptionProvider with ChangeNotifier {
         id: '2',
         userId: 'sample_user',
         serviceName: 'Amazon Prime Video',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/amazon-prime-video.png',
+        serviceLogoUrl: 'https://m.media-amazon.com/images/I/31W9hs7w0JL.png',
         monthlyPrice: 500,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 120)),
@@ -73,7 +95,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '3',
         userId: 'sample_user',
         serviceName: 'Disney+',
-        serviceLogoUrl: 'https://lumiere-a.akamaihd.net/v1/images/dplogo_bg800x800_11482e7e.jpeg',
+        serviceLogoUrl:
+            'https://lumiere-a.akamaihd.net/v1/images/dplogo_bg800x800_11482e7e.jpeg',
         monthlyPrice: 990,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 60)),
@@ -86,7 +109,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '4',
         userId: 'sample_user',
         serviceName: 'Hulu',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/hulu.png',
+        serviceLogoUrl:
+            'https://store-images.s-microsoft.com/image/apps.60756.9007199266246590.a8642808-8fcd-48e6-805e-aede1f148787.c1baaaf0-7b9d-4e6e-9661-56452a1f7ddd',
         monthlyPrice: 1026,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 45)),
@@ -99,7 +123,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '5',
         userId: 'sample_user',
         serviceName: 'U-NEXT',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/u-next.png',
+        serviceLogoUrl:
+            'https://play-lh.googleusercontent.com/gV6YXOBVU1n7uwgVrbl6mZzny8dCtC5e3cw7yueAvN2vMSPaurbEOvHVuH0ToeXY928',
         monthlyPrice: 2189,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 30)),
@@ -112,7 +137,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '6',
         userId: 'sample_user',
         serviceName: 'ABEMAプレミアム',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/abema.png',
+        serviceLogoUrl:
+            'https://img.my-best.com/product_images/0e54923afca53590988d3ccb5ba1d597.jpeg?ixlib=rails-4.3.1&q=45&lossless=0&w=280&h=280&fit=clip&s=18e071e331a98e5c721d152451d85d7e',
         monthlyPrice: 960,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 20)),
@@ -125,7 +151,7 @@ class SubscriptionProvider with ChangeNotifier {
         id: '12',
         userId: 'sample_user',
         serviceName: 'YouTube Premium',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/youtube-play.png',
+        serviceLogoUrl: 'https://m.media-amazon.com/images/I/4195dyf+rFL.png',
         monthlyPrice: 1280,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 75)),
@@ -140,7 +166,7 @@ class SubscriptionProvider with ChangeNotifier {
         id: '7',
         userId: 'sample_user',
         serviceName: 'Spotify Premium',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/spotify.png',
+        serviceLogoUrl: 'https://m.media-amazon.com/images/I/31B2Nyzd8XL.png',
         monthlyPrice: 980,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 180)),
@@ -153,7 +179,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '8',
         userId: 'sample_user',
         serviceName: 'Apple Music',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/apple-music.png',
+        serviceLogoUrl:
+            'https://store-images.s-microsoft.com/image/apps.62962.14205055896346606.c235e3d6-fbce-45bb-9051-4be6c2ecba8f.28d7c3cb-0c64-40dc-9f24-53326f80a6dd',
         monthlyPrice: 1080,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 150)),
@@ -166,7 +193,7 @@ class SubscriptionProvider with ChangeNotifier {
         id: '9',
         userId: 'sample_user',
         serviceName: 'Amazon Music Unlimited',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/amazon-music.png',
+        serviceLogoUrl: 'https://m.media-amazon.com/images/I/31cqMCWdDCL.png',
         monthlyPrice: 1080,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 90)),
@@ -179,7 +206,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '10',
         userId: 'sample_user',
         serviceName: 'YouTube Music',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/youtube-music.png',
+        serviceLogoUrl:
+            'https://yt3.googleusercontent.com/ytc/AIdro_l-6FQr2F5viYuELhfXHiUU46MqDNZkXPwUqbdZagQMt9A=s900-c-k-c0x00ffffff-no-rj',
         monthlyPrice: 1080,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 60)),
@@ -192,7 +220,8 @@ class SubscriptionProvider with ChangeNotifier {
         id: '11',
         userId: 'sample_user',
         serviceName: 'LINE MUSIC',
-        serviceLogoUrl: 'https://img.icons8.com/color/48/line-me.png',
+        serviceLogoUrl:
+            'https://obs.line-scdn.net/0h_TLGLoaoAHtxPihBy6h_LFl8GxUfWllvFAYOA1w9X0NbBxUoRAgdGAQ-CUsICEEvGApHHgFtVk8MWRUoTVBMFFQ5WUoZDxQlRQ0bTlQ/sp_retina',
         monthlyPrice: 980,
         currency: 'JPY',
         startDate: DateTime.now().subtract(const Duration(days: 40)),
@@ -207,12 +236,14 @@ class SubscriptionProvider with ChangeNotifier {
   Future<void> cancelSubscription(String subscriptionId) async {
     _setLoading(true);
     _setError('');
-    
+
     try {
       // In a real app, this would call the API to cancel the subscription
       await Future.delayed(const Duration(seconds: 1));
-      
-      final index = _subscriptions.indexWhere((sub) => sub.id == subscriptionId);
+
+      final index = _subscriptions.indexWhere(
+        (sub) => sub.id == subscriptionId,
+      );
       if (index != -1) {
         _subscriptions[index] = SubscriptionModel(
           id: _subscriptions[index].id,
@@ -230,7 +261,7 @@ class SubscriptionProvider with ChangeNotifier {
           customerServiceEmail: _subscriptions[index].customerServiceEmail,
         );
       }
-      
+
       _setLoading(false);
       notifyListeners();
     } catch (e) {
@@ -254,7 +285,10 @@ class SubscriptionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSubscriptionStatus(String subscriptionId, SubscriptionStatus newStatus) {
+  void updateSubscriptionStatus(
+    String subscriptionId,
+    SubscriptionStatus newStatus,
+  ) {
     final index = _subscriptions.indexWhere((sub) => sub.id == subscriptionId);
     if (index != -1) {
       _subscriptions[index] = SubscriptionModel(
@@ -265,12 +299,13 @@ class SubscriptionProvider with ChangeNotifier {
         monthlyPrice: _subscriptions[index].monthlyPrice,
         currency: _subscriptions[index].currency,
         startDate: _subscriptions[index].startDate,
-        nextBillingDate: newStatus == SubscriptionStatus.active 
-            ? _subscriptions[index].nextBillingDate ?? DateTime.now().add(const Duration(days: 30))
-            : null,
-        cancelledAt: newStatus == SubscriptionStatus.cancelled 
-            ? DateTime.now() 
-            : null,
+        nextBillingDate:
+            newStatus == SubscriptionStatus.active
+                ? _subscriptions[index].nextBillingDate ??
+                    DateTime.now().add(const Duration(days: 30))
+                : null,
+        cancelledAt:
+            newStatus == SubscriptionStatus.cancelled ? DateTime.now() : null,
         status: newStatus,
         cancellationUrl: _subscriptions[index].cancellationUrl,
         customerServicePhone: _subscriptions[index].customerServicePhone,
