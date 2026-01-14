@@ -12,8 +12,8 @@ class SubscriptionProvider with ChangeNotifier {
   List<SubscriptionModel> get cancelledSubscriptions => 
       _subscriptions.where((sub) => sub.isCancelled).toList();
   
-  List<SubscriptionModel> get videoStreamingServices => _subscriptions.where((sub) => 
-      ['Netflix', 'Amazon Prime Video', 'Disney+', 'Hulu', 'U-NEXT', 'ABEMAプレミアム'].contains(sub.serviceName)).toList();
+  List<SubscriptionModel> get videoStreamingServices => _subscriptions.where((sub) =>
+      ['Netflix', 'Amazon Prime Video', 'Disney+', 'Hulu', 'U-NEXT', 'ABEMAプレミアム', 'YouTube Premium'].contains(sub.serviceName)).toList();
   
   List<SubscriptionModel> get musicStreamingServices => _subscriptions.where((sub) => 
       ['Spotify Premium', 'Apple Music', 'Amazon Music Unlimited', 'YouTube Music', 'LINE MUSIC'].contains(sub.serviceName)).toList();
@@ -121,7 +121,20 @@ class SubscriptionProvider with ChangeNotifier {
         cancellationUrl: 'https://abema.tv/account',
         customerServiceEmail: 'support@abema.tv',
       ),
-      
+      SubscriptionModel(
+        id: '12',
+        userId: 'sample_user',
+        serviceName: 'YouTube Premium',
+        serviceLogoUrl: 'https://img.icons8.com/color/48/youtube-play.png',
+        monthlyPrice: 1280,
+        currency: 'JPY',
+        startDate: DateTime.now().subtract(const Duration(days: 75)),
+        nextBillingDate: DateTime.now().add(const Duration(days: 7)),
+        status: SubscriptionStatus.active,
+        cancellationUrl: 'https://www.youtube.com/paid_memberships',
+        customerServiceEmail: 'support@youtube.com',
+      ),
+
       // 音楽配信サービス
       SubscriptionModel(
         id: '7',
