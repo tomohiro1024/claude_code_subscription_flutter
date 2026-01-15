@@ -43,7 +43,13 @@ class SubscriptionProvider with ChangeNotifier {
 
   List<SubscriptionModel> get sportsStreamingServices =>
       _subscriptions
-          .where((sub) => ['DAZN', 'SPOTV NOW'].contains(sub.serviceName))
+          .where(
+            (sub) => [
+              'DAZN',
+              'SPOTV NOW',
+              'U-NEXT(サッカーパック)',
+            ].contains(sub.serviceName),
+          )
           .toList();
 
   bool get isLoading => _isLoading;
@@ -260,6 +266,19 @@ class SubscriptionProvider with ChangeNotifier {
         status: SubscriptionStatus.notSubscribed,
         cancellationUrl: 'https://www.spotvnow.jp/account',
         customerServiceEmail: 'support@spotvnow.jp',
+      ),
+      SubscriptionModel(
+        id: '15',
+        userId: 'sample_user',
+        serviceName: 'U-NEXT(サッカーパック)',
+        serviceLogoUrl:
+            'https://play-lh.googleusercontent.com/gV6YXOBVU1n7uwgVrbl6mZzny8dCtC5e3cw7yueAvN2vMSPaurbEOvHVuH0ToeXY928',
+        monthlyPrice: 2600,
+        currency: 'JPY',
+        startDate: DateTime.now(),
+        status: SubscriptionStatus.notSubscribed,
+        cancellationUrl: 'https://video.unext.jp/mypage',
+        customerServiceEmail: 'support@unext.jp',
       ),
     ];
   }

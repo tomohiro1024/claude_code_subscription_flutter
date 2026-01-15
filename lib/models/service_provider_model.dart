@@ -344,6 +344,24 @@ class ServiceProviders {
       difficulty: 2.0,
       description: 'スポーツライブ配信サービス',
     ),
+    ServiceProviderModel(
+      id: 'u-next(サッカーパック)',
+      name: 'U-NEXT(サッカーパック)',
+      logoUrl: 'https://logo.clearbit.com/unext.jp',
+      category: 'スポーツ配信',
+      website: 'https://video.unext.jp',
+      cancellationUrl: 'https://video.unext.jp/settings/subscription',
+      customerServicePhone: '0570-064-996',
+      cancellationSteps: [
+        'U-NEXTにログインする',
+        '「設定・サポート」を選択する',
+        '「契約内容の確認・変更」をクリックする',
+        '「解約はこちら」を選択する',
+        'アンケートに回答して解約を完了する',
+      ],
+      difficulty: 3.0,
+      description: 'U-NEXTのサッカー専門パック',
+    ),
   ];
 
   static ServiceProviderModel? getServiceById(String id) {
