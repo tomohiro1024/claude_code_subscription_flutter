@@ -150,7 +150,7 @@ class SubscriptionProvider with ChangeNotifier {
         serviceName: 'ABEMAプレミアム',
         serviceLogoUrl:
             'https://img.my-best.com/product_images/0e54923afca53590988d3ccb5ba1d597.jpeg?ixlib=rails-4.3.1&q=45&lossless=0&w=280&h=280&fit=clip&s=18e071e331a98e5c721d152451d85d7e',
-        monthlyPrice: 960,
+        monthlyPrice: 580,
         currency: 'JPY',
         startDate: DateTime.now(),
         status: SubscriptionStatus.notSubscribed,

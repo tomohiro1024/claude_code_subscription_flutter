@@ -335,7 +335,9 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
 
   bool _hasMonthlyPlanInfo() {
     final name = widget.subscription.serviceName.toLowerCase();
-    return name.contains('netflix') || name.contains('disney');
+    return name.contains('netflix') ||
+        name.contains('disney') ||
+        name.contains('abema');
   }
 
   bool _hasYearlyPlanInfo() {
@@ -355,6 +357,11 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
       _showPlansDialog(context, 'Disney+プラン一覧（月額）', [
         {'name': 'Disney+ スタンダード', 'price': '¥1,140'},
         {'name': 'Disney+ プレミアム', 'price': '¥1,520'},
+      ]);
+    } else if (name.contains('abema')) {
+      _showPlansDialog(context, 'ABEMAプレミアム プラン一覧（月額）', [
+        {'name': '広告つきABEMAプレミアム', 'price': '¥580'},
+        {'name': 'ABEMAプレミアム', 'price': '¥1,080'},
       ]);
     }
   }
