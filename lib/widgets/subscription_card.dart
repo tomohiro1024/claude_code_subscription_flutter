@@ -104,11 +104,9 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              if (widget.subscription.serviceName
-                                  .toLowerCase()
-                                  .contains('netflix'))
+                              if (_hasMonthlyPlanInfo())
                                 GestureDetector(
-                                  onTap: () => _showNetflixPlansDialog(context),
+                                  onTap: () => _showMonthlyPlansDialog(context),
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 6),
                                     child: Icon(
@@ -122,13 +120,30 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
                           ),
                           if (widget.subscription.yearPrice != null) ...[
                             const SizedBox(height: 2),
-                            Text(
-                              '¥${_currencyFormatter.format(widget.subscription.yearPrice!)} / 年額',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[500],
-                                fontWeight: FontWeight.w400,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  '¥${_currencyFormatter.format(widget.subscription.yearPrice!)} / 年額',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[500],
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                if (_hasYearlyPlanInfo())
+                                  GestureDetector(
+                                    onTap:
+                                        () => _showYearlyPlansDialog(context),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 6),
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        size: 16,
+                                        color: Colors.blue[600],
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ],
                         ],
@@ -318,26 +333,84 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
     }
   }
 
-  void _showNetflixPlansDialog(BuildContext context) {
+  bool _hasMonthlyPlanInfo() {
+    final name = widget.subscription.serviceName.toLowerCase();
+    return name.contains('netflix') || name.contains('disney');
+  }
+
+  bool _hasYearlyPlanInfo() {
+    final name = widget.subscription.serviceName.toLowerCase();
+    return name.contains('disney');
+  }
+
+  void _showMonthlyPlansDialog(BuildContext context) {
+    final name = widget.subscription.serviceName.toLowerCase();
+    if (name.contains('netflix')) {
+      _showPlansDialog(context, 'Netflixプラン一覧（月額）', [
+        {'name': '広告つきスタンダード', 'price': '¥890'},
+        {'name': 'スタンダード', 'price': '¥1,590'},
+        {'name': 'プレミアム', 'price': '¥2,290'},
+      ]);
+    } else if (name.contains('disney')) {
+      _showPlansDialog(context, 'Disney+プラン一覧（月額）', [
+        {'name': 'Disney+ スタンダード', 'price': '¥1,140'},
+        {'name': 'Disney+ プレミアム', 'price': '¥1,520'},
+      ]);
+    }
+  }
+
+  void _showYearlyPlansDialog(BuildContext context) {
+    final name = widget.subscription.serviceName.toLowerCase();
+    if (name.contains('disney')) {
+      _showPlansDialog(context, 'Disney+プラン一覧（年額）', [
+        {'name': 'Disney+ スタンダード', 'price': '¥11,400'},
+        {'name': 'Disney+ プレミアム', 'price': '¥15,200'},
+      ]);
+    }
+  }
+
+  void _showPlansDialog(
+    BuildContext context,
+    String title,
+    List<Map<String, String>> plans,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Netflixプラン一覧',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          title: Column(
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                width: 240,
+                child: Text(
+                  '※料金は2026年1月時点の情報です。変更される場合があります。',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ),
+            ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildPlanRow('広告つきスタンダード', '¥890'),
-              const SizedBox(height: 12),
-              _buildPlanRow('スタンダード', '¥1,590'),
-              const SizedBox(height: 12),
-              _buildPlanRow('プレミアム', '¥2,290'),
-            ],
+            children:
+                plans.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final plan = entry.value;
+                  return Column(
+                    children: [
+                      if (index > 0) const SizedBox(height: 12),
+                      _buildPlanRow(plan['name']!, plan['price']!),
+                    ],
+                  );
+                }).toList(),
           ),
           actions: [
             Center(

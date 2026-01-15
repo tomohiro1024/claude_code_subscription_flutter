@@ -104,8 +104,8 @@ class SubscriptionProvider with ChangeNotifier {
         serviceName: 'Disney+',
         serviceLogoUrl:
             'https://lumiere-a.akamaihd.net/v1/images/dplogo_bg800x800_11482e7e.jpeg',
-        monthlyPrice: 990,
-        yearPrice: 9900,
+        monthlyPrice: 1140,
+        yearPrice: 11400,
         currency: 'JPY',
         startDate: DateTime.now(),
         status: SubscriptionStatus.notSubscribed,
@@ -363,7 +363,9 @@ class SubscriptionProvider with ChangeNotifier {
   }
 
   // SharedPreferencesからステータスを読み込み
-  Future<SubscriptionStatus?> _loadStatusFromPrefs(String subscriptionId) async {
+  Future<SubscriptionStatus?> _loadStatusFromPrefs(
+    String subscriptionId,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final statusString = prefs.getString('subscription_status_$subscriptionId');
     if (statusString == null) return null;
@@ -397,7 +399,9 @@ class SubscriptionProvider with ChangeNotifier {
                       DateTime.now().add(const Duration(days: 30))
                   : null,
           cancelledAt:
-              savedStatus == SubscriptionStatus.cancelled ? DateTime.now() : null,
+              savedStatus == SubscriptionStatus.cancelled
+                  ? DateTime.now()
+                  : null,
           status: savedStatus,
           cancellationUrl: _subscriptions[i].cancellationUrl,
           customerServicePhone: _subscriptions[i].customerServicePhone,
