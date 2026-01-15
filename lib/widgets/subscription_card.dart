@@ -333,58 +333,89 @@ class _SubscriptionCardState extends State<SubscriptionCard> {
     }
   }
 
-  bool _hasMonthlyPlanInfo() {
-    final name = widget.subscription.serviceName.toLowerCase();
-    return name.contains('netflix') ||
-        name.contains('disney') ||
-        name.contains('abema') ||
-        name.contains('spotify');
-  }
-
-  bool _hasYearlyPlanInfo() {
-    final name = widget.subscription.serviceName.toLowerCase();
-    return name.contains('disney') || name.contains('spotv');
-  }
-
-  void _showMonthlyPlansDialog(BuildContext context) {
-    final name = widget.subscription.serviceName.toLowerCase();
-    if (name.contains('netflix')) {
-      _showPlansDialog(context, 'Netflixプラン一覧（月額）', [
+  static const _monthlyPlans = <String, Map<String, dynamic>>{
+    'netflix': {
+      'title': 'Netflixプラン一覧（月額）',
+      'plans': [
         {'name': '広告つきスタンダード', 'price': '¥890'},
         {'name': 'スタンダード', 'price': '¥1,590'},
         {'name': 'プレミアム', 'price': '¥2,290'},
-      ]);
-    } else if (name.contains('disney')) {
-      _showPlansDialog(context, 'Disney+プラン一覧（月額）', [
+      ],
+    },
+    'disney': {
+      'title': 'Disney+プラン一覧（月額）',
+      'plans': [
         {'name': 'Disney+ スタンダード', 'price': '¥1,140'},
         {'name': 'Disney+ プレミアム', 'price': '¥1,520'},
-      ]);
-    } else if (name.contains('abema')) {
-      _showPlansDialog(context, 'ABEMAプレミアム プラン一覧（月額）', [
+      ],
+    },
+    'abema': {
+      'title': 'ABEMAプレミアム プラン一覧（月額）',
+      'plans': [
         {'name': '広告つきABEMAプレミアム', 'price': '¥580'},
         {'name': 'ABEMAプレミアム', 'price': '¥1,080'},
-      ]);
-    } else if (name.contains('spotify')) {
-      _showPlansDialog(context, 'Spotify Premium プラン一覧（月額）', [
+      ],
+    },
+    'spotify': {
+      'title': 'Spotify Premium プラン一覧（月額）',
+      'plans': [
         {'name': '基本プラン', 'price': '¥1,080'},
         {'name': 'ファミリープラン', 'price': '¥1,480'},
         {'name': '学割プラン', 'price': '¥580'},
-      ]);
+      ],
+    },
+  };
+
+  static const _yearlyPlans = <String, Map<String, dynamic>>{
+    'disney': {
+      'title': 'Disney+プラン一覧（年額）',
+      'plans': [
+        {'name': 'Disney+ スタンダード', 'price': '¥11,400'},
+        {'name': 'Disney+ プレミアム', 'price': '¥15,200'},
+      ],
+    },
+    'spotv': {
+      'title': 'SPOTV NOW プラン一覧（年額）',
+      'plans': [
+        {'name': 'ベーシック年額プラン', 'price': '¥18,000'},
+        {'name': 'プレミアム年額プラン', 'price': '¥27,000'},
+      ],
+    },
+  };
+
+  String? _findPlanKey(Map<String, Map<String, dynamic>> plans) {
+    final name = widget.subscription.serviceName.toLowerCase();
+    for (final key in plans.keys) {
+      if (name.contains(key)) return key;
+    }
+    return null;
+  }
+
+  bool _hasMonthlyPlanInfo() => _findPlanKey(_monthlyPlans) != null;
+
+  bool _hasYearlyPlanInfo() => _findPlanKey(_yearlyPlans) != null;
+
+  void _showMonthlyPlansDialog(BuildContext context) {
+    final key = _findPlanKey(_monthlyPlans);
+    if (key != null) {
+      final data = _monthlyPlans[key]!;
+      _showPlansDialog(
+        context,
+        data['title'] as String,
+        List<Map<String, String>>.from(data['plans'] as List),
+      );
     }
   }
 
   void _showYearlyPlansDialog(BuildContext context) {
-    final name = widget.subscription.serviceName.toLowerCase();
-    if (name.contains('disney')) {
-      _showPlansDialog(context, 'Disney+プラン一覧（年額）', [
-        {'name': 'Disney+ スタンダード', 'price': '¥11,400'},
-        {'name': 'Disney+ プレミアム', 'price': '¥15,200'},
-      ]);
-    } else if (name.contains('spotv')) {
-      _showPlansDialog(context, 'SPOTV NOW プラン一覧（年額）', [
-        {'name': 'ベーシック年額プラン', 'price': '¥18,000'},
-        {'name': 'プレミアム年額プラン', 'price': '¥27,000'},
-      ]);
+    final key = _findPlanKey(_yearlyPlans);
+    if (key != null) {
+      final data = _yearlyPlans[key]!;
+      _showPlansDialog(
+        context,
+        data['title'] as String,
+        List<Map<String, String>>.from(data['plans'] as List),
+      );
     }
   }
 
